@@ -1,4 +1,4 @@
-test
+#VarScan Somatic Mutation Call
 
 #set environment for software and input file
 samtools=/home/thwang/software/samtools-1.2/bin/samtools
