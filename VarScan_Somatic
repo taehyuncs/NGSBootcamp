@@ -1,4 +1,5 @@
 #VarScan Somatic Mutation Call
+# http://dkoboldt.github.io/varscan/
 
 #set environment for software and input file
 samtools=/home/thwang/software/samtools-1.2/bin/samtools
