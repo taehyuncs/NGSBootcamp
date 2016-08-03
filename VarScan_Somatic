@@ -1,14 +1,30 @@
+# Single Neucleotide Variants (SNVs) and small Insertion and Deletion (Indel) analysis
+
+# Very general workflow for variant analysis
+# 1. fastq files from your sample
+# 2. Run FastQC for quality control
+#  2a) if qualtify of bases (in particular at the end of reads) are bad, perform trimming.
+#  2b) if there are adapter sequences present in your fastq files, remove adapter sequence.
+# => OK. fastq quality is good. Lets go to step 3
+# 3. Perform Alignemnt using your favorite aligner (e.g., BWA, etc.) and generate SAM or BAM files.
+# 4. Sort bam file and generate an index file for your bam file.
+# 5. Variant calling using VarScan (http://dkoboldt.github.io/varscan/)
+#  5a) Generate mpileup data.
+#    => What is (m)pileup data? Go to the following link: http://samtools.sourceforge.net/pileup.shtml
+
+
+
 #VarScan Somatic Mutation Call
 # http://dkoboldt.github.io/varscan/
 
-#set environment for software and input file
-samtools=/home/thwang/software/samtools-1.2/bin/samtools
-reference=/home/thwang/reference/hg19.fa
-java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java
-varscan=/home/thwang/software/VarScan.v2.3.9.jar
-snpEFF=/home/thwang/software/snpEff/snpEff.jar
-Nbam=/home/thwang/test/normal.bam
-Tbam=/home/thwang/test/tumor.bam
+#set environment variables for software and input file
+samtools=/home/thwang/software/samtools-1.2/bin/samtools #Samtools
+reference=/home/thwang/reference/hg19.fa #human reference data. We use hg19 version not hg38
+java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java #Java
+varscan=/home/thwang/software/VarScan.v2.3.9.jar #VarScan is software to call somatic mutation
+snpEFF=/home/thwang/software/snpEff/snpEff.jar #snpEff is software to annotate variant calls based on VCF file
+Nbam=/home/thwang/test/normal.bam #Tumor bam file
+Tbam=/home/thwang/test/tumor.bam #Normal bam file
 
 #generate mpileup using samtools. Runing time ~ 5min for each sample
 $samtools mpileup -f $reference $Nbam > normal.mpileup
