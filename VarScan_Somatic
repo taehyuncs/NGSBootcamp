@@ -1,0 +1,22 @@
+test
+
+#set environment for software and input file
+samtools=/home/thwang/software/samtools-1.2/bin/samtools
+reference=/home/thwang/reference/hg19.fa
+java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java
+varscan=/home/thwang/software/VarScan.v2.3.9.jar
+snpEFF=/home/thwang/software/snpEff/snpEff.jar
+Nbam=/home/thwang/test/normal.bam
+Tbam=/home/thwang/test/tumor.bam
+
+#generate mpileup using samtools. Runing time ~ 5min for each sample
+$samtools mpileup -f $reference $Nbam > normal.mpileup
+$samtools mpileup -f $reference $Tbam > tumor.mpileup
+
+#calling somatic mutations using varscan, the output would be somatic.snp.vcf and somatic.indel.vcf. Runing time ~ 5min
+$java -jar $varscan somatic normal.mpileup tumor.mpileup somatic --output-vcf
+
+#annotate vcf file using snpEFF. Runing time ~ 2min
+$java -jar $snpEFF hg19 somatic.indel.vcf > somatic.indel.ann.vcf
+$java -jar $snpEFF hg19 somatic.snp.vcf > somatic.snp.ann.vcf
+### when testing in the account of thwang, the time was right, but when I was using my account, the time would be very long....(more than 10min for steps which suppose to use 5min)​
