@@ -30,8 +30,8 @@ reference=/home/thwang/reference/hg19.fa #human reference data. We use hg19 vers
 java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java #Java
 varscan=/home/thwang/software/VarScan.v2.3.9.jar #VarScan is software to call somatic mutation
 snpEFF=/home/thwang/software/snpEff/snpEff.jar #snpEff is software to annotate variant calls based on VCF file
-Nbam=/home/thwang/test/normal.bam #Tumor bam file
-Tbam=/home/thwang/test/tumor.bam #Normal bam file
+Nbam=/home/thwang/test/normal.bam #Tumor alignment bam file by bwa (https://sourceforge.net/projects/bio-bwa/)
+Tbam=/home/thwang/test/tumor.bam #Normal alignment bam file by bwa (https://sourceforge.net/projects/bio-bwa/)
 
 #generate mpileup using samtools. Runing time ~ 5min for each sample
 $samtools mpileup -f $reference $Nbam > normal.mpileup
