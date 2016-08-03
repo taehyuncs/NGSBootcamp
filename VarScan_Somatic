@@ -16,6 +16,9 @@
 # 6. Now we have variant calls (e.g., a list of SNVs and Indels). We want to annotate them to see whether those variants are reported by someone eles or associated with known disease phenotype and/or see what would be functional impact.
 #  6a) We will use snpEff tool (http://snpeff.sourceforge.net) and please read snpEff readme file (http://snpeff.sourceforge.net/SnpEff.html)
 # 7. Interpretation. Now we have annotated variant calls and need to make sense out of it.
+# 8. It is important to visualize your bam file to double check whether variants called by computational algorithms are real(?).
+# Utilmately, you want to validate your variants using Sanger or etc.
+
 
 
 
