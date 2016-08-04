@@ -140,12 +140,45 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
 
 
-########### Part 2: Variant calling using VarScan #############
+########### Part 3: Variant calling using VarScan #############
 
 #######################################
 #         VarScan Variant Call        #
 # http://dkoboldt.github.io/varscan/  #
 #######################################
+
+############################################################################
+varscan=/home/thwang/software/VarScan.v2.3.9.jar
+samtools=/home/thwang/software/samtools-1.2/bin/samtools
+reference=/home/thwang/reference/hg19.fa
+picard=/home/thwang/software/picard.jar
+snpEFF=/home/thwang/software/snpEff/snpEff.jar
+outdir="$PWD"
+
+Nbam=normal_TP53_recal.bam
+Tbam=tumor_TP53_recal.bam
+
+$samtools mpileup -f $reference $Nbam > normal.mpileup
+$samtools mpileup -f $reference $Tbam > tumor.mpileup
+
+$java -jar $varscan mpileup2snp normal.mpileup > normal.varscan.germline.snp.vcf --output-vcf
+$java -jar $varscan mpileup2indel normal.mpileup > normal.varscan.germline.indel.vcf --output-vcf
+$java -jar $varscan mpileup2snp tumor.mpileup > tumor.varscan.germline.snp.vcf --output-vcf
+$java -jar $varscan mpileup2indel tumor.mpileup > tumor.varscan.germline.indel.vcf --output-vcf
+#calling somatic mutations using varscan, the output would be somatic.snp.vcf and somatic.indel.vcf. Runing time ~ 5min
+$java -jar $varscan somatic normal.mpileup tumor.mpileup somatic --output-vcf
+
+#annotate vcf file using snpEFF. Runing time ~ 2min
+$java -jar $snpEFF hg19 somatic.indel.vcf > varscan.somatic.indel.ann.vcf
+$java -jar $snpEFF hg19 somatic.snp.vcf > varscan.somatic.snp.ann.vcf
+$java -jar $snpEFF hg19 normal.varscan.germline.snp.vcf > normal.varscan.germline.snp.ann.vcf
+$java -jar $snpEFF hg19 normal.varscan.germline.indel.vcf > normal.varscan.germline.indel.ann.vcf
+$java -jar $snpEFF hg19 tumor.varscan.germline.snp.vcf > tumor.varscan.germline.snp.ann.vcf
+$java -jar $snpEFF hg19 tumor.varscan.germline.indel.vcf > tumor.varscan.germline.indel.ann.vcf
+
+##################################################################################
+## To be updated #################################################################
+##################################################################################
 
 #set environment variables for software and input file
 samtools=/home/thwang/software/samtools-1.2/bin/samtools #Samtools
