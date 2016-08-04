@@ -151,7 +151,7 @@ picard=/home/thwang/software/picard.jar
 snpEFF=/home/thwang/software/snpEff/snpEff.jar
 outdir="$PWD"
 
-Nbam=normal_TP53_dedup_reads.bam
+Nbam=normal_TP53_recal.bam
 $samtools mpileup -f $reference $Nbam > normal.mpileup
 $java -jar $varscan mpileup2snp normal.mpileup > normal.varscan.germline.snp.vcf --output-vcf
 $java -jar $varscan mpileup2indel normal.mpileup > normal.varscan.germline.indel.vcf --output-vcf
@@ -172,7 +172,7 @@ $java -jar $snpEFF hg19 normal.varscan.germline.indel.vcf > normal.varscan.germl
 # http://dkoboldt.github.io/varscan/                            #
 #################################################################
 
-Tbam=tumor_TP53_dedup_reads.bam
+Tbam=tumor_TP53_recal.bam
 $samtools mpileup -f $reference $Tbam > tumor.mpileup
 $java -jar $varscan mpileup2snp tumor.mpileup > tumor.varscan.germline.snp.vcf --output-vcf
 $java -jar $varscan mpileup2indel tumor.mpileup > tumor.varscan.germline.indel.vcf --output-vcf
