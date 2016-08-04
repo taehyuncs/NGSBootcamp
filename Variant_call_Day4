@@ -79,7 +79,7 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sa
 $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.tmp.COSMIC.coding.noncoding.snpEFF
 $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
-# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*recal.bam* ./Download
 
 ##########################################################################################
 #         GATK Tumor Variant Call without matching normal                                #
@@ -129,7 +129,7 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sa
 $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.tmp.COSMIC.coding.noncoding.snpEFF
 $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
-# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*recal.bam* ./Download
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 ########### Part 3: Variant calling using VarScan #############
@@ -164,7 +164,7 @@ $java -jar $snpEFF hg19 normal.varscan.germline.indel.vcf > normal.varscan.germl
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
-# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*recal.bam* ./Download
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 #################################################################
@@ -185,7 +185,7 @@ $java -jar $snpEFF hg19 tumor.varscan.germline.indel.vcf > tumor.varscan.germlin
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
-# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*recal.bam* ./Download
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 ##########################################################################
@@ -206,7 +206,7 @@ $java -jar $snpEFF hg19 somatic.snp.vcf > varscan.somatic.snp.ann.vcf
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
 
 # Download your bam and bai files and visualize with IGV tool
-# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*recal.bam* ./Download
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 
