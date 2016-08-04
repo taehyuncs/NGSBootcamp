@@ -127,7 +127,7 @@ $java -jar ${gatk} -I ${outdir}/${sample}_dedup_reads.bam -R /home/thwang/refere
 $java -jar ${gatk} -T BaseRecalibrator -R /home/thwang/reference/hg19.fa -I ${outdir}/${sample}_realigned.bam -knownSites /home/thwang/reference/Mills_and_1000G_gold_standard.indels.b37.vcf -knownSites /home/thwang/reference/1000G_phase1.indels.b37.vcf -knownSites /home/thwang/reference/dbsnp_138.b37.vcf -o ${outdir}/${sample}_recal.table -L 17:7552323-7616951
 $java -jar ${gatk} -T PrintReads -R /home/thwang/reference/hg19.fa -I ${outdir}/${sample}_realigned.bam -BQSR ${outdir}/${sample}_recal.table -o ${outdir}/${sample}_recal.bam -L 17:7552323-7616951
 
-# Run GATK HaplotypeCaller to call germline variants
+# Run GATK HaplotypeCaller to call somatic/germline variants
 $java -jar ${gatk} -T HaplotypeCaller -R ${reference} -I ${outdir}/${sample}_recal.bam --genotyping_mode DISCOVERY -stand_emit_conf 10 -stand_call_conf 30 -o ${outdir}/${sample}.vcf -L 17:7552323-7616951
 
 # Annotate VCF (variants) file
@@ -137,7 +137,7 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdi
 $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
-
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 ########### Part 3: Variant calling using VarScan #############
 
@@ -170,7 +170,9 @@ $java -jar $snpEFF hg19 normal.varscan.germline.indel.vcf > normal.varscan.germl
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf your_vcf_file.vcf > tmp.COSMIC.coding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
-
+# Download your bam and bai files and visualize with IGV tool
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 #################################################################
 #         VarScan Tumor Variant Call without matched normal    #
@@ -189,6 +191,9 @@ $java -jar $snpEFF hg19 tumor.varscan.germline.indel.vcf > tumor.varscan.germlin
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf your_vcf_file.vcf > tmp.COSMIC.coding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
+# Download your bam and bai files and visualize with IGV tool
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
 
 ##########################################################################
 #         VarScan Somatic Variant Call using tumor and matched normal    #
@@ -207,28 +212,25 @@ $java -jar $snpEFF hg19 somatic.snp.vcf > varscan.somatic.snp.ann.vcf
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
 # $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
 
+# Download your bam and bai files and visualize with IGV tool
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*vcf ./Download
+
 
 ##################################################################################
-## To be updated #################################################################
+## Do it yourself ################################################################
 ##################################################################################
 
-#set environment variables for software and input file
-samtools=/home/thwang/software/samtools-1.2/bin/samtools #Samtools
-reference=/home/thwang/reference/hg19.fa #human reference data. We use hg19 version not hg38
-java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java #Java
-varscan=/home/thwang/software/VarScan.v2.3.9.jar #VarScan is software to call somatic mutation
-snpEFF=/home/thwang/software/snpEff/snpEff.jar #snpEff is software to annotate variant calls based on VCF file
-Nbam=/home/thwang/test/normal.bam #Tumor alignment bam file by bwa (https://sourceforge.net/projects/bio-bwa/)
-Tbam=/home/thwang/test/tumor.bam #Normal alignment bam file by bwa (https://sourceforge.net/projects/bio-bwa/)
+#There are tumor and matched normal fastq files (paire-end) from whole genome sequencing data
+#Your task is to run FASTQC-> BWA -> GATK/VarScan -> snpEff -> Download bam file and visualize it with IGV
 
-#generate mpileup using samtools. Runing time ~ 5min for each sample
-$samtools mpileup -f $reference $Nbam > normal.mpileup
-$samtools mpileup -f $reference $Tbam > tumor.mpileup
+# tumor line
+# read_sample_2126_T1.R1.fastq # forward_read
+# read_sample_2126_T1.R2.fastq # reverse_read
 
-#calling somatic mutations using varscan, the output would be somatic.snp.vcf and somatic.indel.vcf. Runing time ~ 5min
-$java -jar $varscan somatic normal.mpileup tumor.mpileup somatic --output-vcf
+# matched normal line
+# read_sample_2126_N1.R1.fastq # forward_read
+# read_sample_2126_N1.R2.fastq # reverse_read
 
-#annotate vcf file using snpEFF. Runing time ~ 2min
-$java -jar $snpEFF hg19 somatic.indel.vcf > somatic.indel.ann.vcf
-$java -jar $snpEFF hg19 somatic.snp.vcf > somatic.snp.ann.vcf
-### when testing in the account of thwang, the time was right, but when I was using my account, the time would be very long....(more than 10min for steps which suppose to use 5min)​
+#Let's do it!
+
