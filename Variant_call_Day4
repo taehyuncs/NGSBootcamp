@@ -20,6 +20,17 @@
 # Utilmately, you want to validate your variants using Sanger or etc.
 
 
+ssh youraccount@toxea.swmed.edu
+Password:
+
+mdkir day4
+cd day4
+cp /data/bootcamp/day4/*.bam .
+ls # make sure you have tumor.bam and normal.bam
+qrsh
+hostname # make sure you do  run your code on computing node => compute-4-0.local
+
+
 
 ########### Part 1: Variant calling using GATK #############
 
