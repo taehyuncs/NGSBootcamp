@@ -35,7 +35,7 @@ hostname
 
 mkdir day4
 cd day4
-cp /home/thwang/test/again/*fastq .
+cp /data/bootcamp/day4/*fastq .
 
 ########### Part 1: Variant calling using GATK #############
 
@@ -55,6 +55,19 @@ java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java
 outdir="$PWD"
 
 sample=normal_TP53
+
+# Run QC for your fastq files!!!!!!!
+# /data/bootcamp/seqprg/FastQC/fastqc ${sample}.fastq 
+# If QC is bad, you need to fix it before you run the rest of analysis. The following is code for trimming from Day 1.
+# export PATH=/data/bootcamp/seqprg/jre1.8.0_101/bin:$PATH
+# /data/bootcamp/seqprg/FastQC/fastqc NA12878_100ng.R1.1M.fq
+# /data/bootcamp/seqprg/FastQC/fastqc NA12878_100ng.R2.1M.fq
+
+# Next we will trim the sequences and run fastqc again
+# /data/bootcamp/seqprg/trim_galore_zip/trim_galore --paired -q 25 --illumina --length 35 --no_report_file --path_to_cutadapt /data/bootcamp/seqprg/bin/cutadapt NA12878_100ng.R1.1M.fq NA12878_100ng.R2.1M.fq
+# /data/bootcamp/seqprg/FastQC/fastqc NA12878_100ng.R1.1M_val_1.fq
+# /data/bootcamp/seqprg/FastQC/fastqc NA12878_100ng.R2.1M_val_2.fq
+
 
 $bwa mem -M -R "@RG\tID:group1\tSM:${sample}\tPL:illumina\tLB:lib1\tPU:unit1" $reference ${sample}.fastq > ${outdir}/${sample}.sam
 $java -jar ${picard} SortSam INPUT=${outdir}/${sample}.sam OUTPUT=${outdir}/${sample}_sorted_reads.bam SORT_ORDER=coordinate
@@ -82,7 +95,36 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample
 # https://software.broadinstitute.org/gatk/best-practices/bp_3step.php?case=GermShortWGS #
 ##########################################################################################
 
+gatk=/home/thwang/software/GenomeAnalysisTK.jar
+picard=/home/thwang/software/picard.jar
+SnpSift=/home/thwang/software/snpEff/SnpSift.jar
+snpEFFanno=/home/thwang/reference
+bwa=~/software/bwa-0.7.12/bwa
+reference=/home/thwang/reference/hg19.fa # bwa reference
+samtools=/home/thwang/software/samtools-1.2/bin/samtools
+java=/data/bootcamp/seqprg/jre1.8.0_101/bin/java
+outdir="$PWD"
 
+sample=tumor_TP53
+
+$bwa mem -M -R "@RG\tID:group1\tSM:${sample}\tPL:illumina\tLB:lib1\tPU:unit1" $reference ${sample}.fastq > ${outdir}/${sample}.sam
+$java -jar ${picard} SortSam INPUT=${outdir}/${sample}.sam OUTPUT=${outdir}/${sample}_sorted_reads.bam SORT_ORDER=coordinate
+$java -jar ${picard} MarkDuplicates INPUT=${outdir}/${sample}_sorted_reads.bam OUTPUT=${outdir}/${sample}_dedup_reads.bam METRICS_FILE=metrics.txt
+$samtools index ${outdir}/${sample}_dedup_reads.bam
+$java -jar ${gatk} -T RealignerTargetCreator -R /home/thwang/reference/hg19.fa -I ${outdir}/${sample}_dedup_reads.bam -known /home/thwang/reference/1000G_phase1.indels.b37.vcf -known /home/thwang/reference/Mills_and_1000G_gold_standard.indels.b37.vcf -o ${outdir}/${sample}_target_intervals.list -L 17:7552323-7616951
+$java -jar ${gatk} -I ${outdir}/${sample}_dedup_reads.bam -R /home/thwang/reference/hg19.fa -T IndelRealigner -targetIntervals ${outdir}/${sample}_target_intervals.list -known /home/thwang/reference/1000G_phase1.indels.b37.vcf -known /home/thwang/reference/Mills_and_1000G_gold_standard.indels.b37.vcf -o ${outdir}/${sample}_realigned.bam -L 17:7552323-7616951
+$java -jar ${gatk} -T BaseRecalibrator -R /home/thwang/reference/hg19.fa -I ${outdir}/${sample}_realigned.bam -knownSites /home/thwang/reference/Mills_and_1000G_gold_standard.indels.b37.vcf -knownSites /home/thwang/reference/1000G_phase1.indels.b37.vcf -knownSites /home/thwang/reference/dbsnp_138.b37.vcf -o ${outdir}/${sample}_recal.table -L 17:7552323-7616951
+$java -jar ${gatk} -T PrintReads -R /home/thwang/reference/hg19.fa -I ${outdir}/${sample}_realigned.bam -BQSR ${outdir}/${sample}_recal.table -o ${outdir}/${sample}_recal.bam -L 17:7552323-7616951
+
+# Run GATK HaplotypeCaller to call germline variants
+$java -jar ${gatk} -T HaplotypeCaller -R ${reference} -I ${outdir}/${sample}_recal.bam --genotyping_mode DISCOVERY -stand_emit_conf 10 -stand_call_conf 30 -o ${outdir}/${sample}.vcf -L 17:7552323-7616951
+
+# Annotate VCF (variants) file
+$java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sample}.vcf > ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF
+$java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.tmp.COSMIC.coding.noncoding.snpEFF
+$java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.COSMIC.coding.noncoding.dbsnp.snpEFF
+# Download your bam and bai files and visualize with IGV tool
+# scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
 
 
 gatk=/home/thwang/software/GenomeAnalysisTK.jar #GATK is a computational tool to call variants
