@@ -1,7 +1,7 @@
 # NGSBootcamp
 NGS Bootcamp for whole exome and genome sequencing analysis
 
-# Single Neucleotide Variants (SNVs) and small Insertion and Deletion (Indel) analysis
+Single Neucleotide Variants (SNVs) and small Insertion and Deletion (Indel) analysis
 
 # Very general workflow for variant analysis
 # 1. fastq files from your sample
