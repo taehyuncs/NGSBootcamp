@@ -79,6 +79,7 @@ $java -jar ${gatk} -T PrintReads -R /home/thwang/reference/hg19.fa -I ${outdir}/
 $java -jar ${gatk} -T HaplotypeCaller -R ${reference} -I ${outdir}/${sample}_recal.bam --genotyping_mode DISCOVERY -stand_emit_conf 10 -stand_call_conf 30 -o ${outdir}/${sample}.vcf -L 17:7552323-7616951
 
 # Annotate VCF (variants) file
+snpEFF=/home/thwang/software/snpEff/snpEff.jar
 $java -jar $snpEFF hg19 ${outdir}/${sample}.vcf > ${outdir}/${sample}.tmp.vcf 
 $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sample}.tmp.vcf  > ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF
 $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.tmp.COSMIC.coding.noncoding.snpEFF
