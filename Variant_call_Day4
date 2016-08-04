@@ -88,8 +88,6 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample
 # Download your bam and bai files and visualize with IGV tool
 # scp youraccount@toxea.swmed.edu:/home/thwang/day4/*dedup_reads.bam* ./Download
 
-########### Part 2: Variant calling using GATK #############
-
 ##########################################################################################
 #         GATK Tumor Variant Call without matching normal                                #
 # https://software.broadinstitute.org/gatk/best-practices/bp_3step.php?case=GermShortWGS #
@@ -133,7 +131,8 @@ $java -jar ${gatk} -T PrintReads -R /home/thwang/reference/hg19.fa -I ${outdir}/
 $java -jar ${gatk} -T HaplotypeCaller -R ${reference} -I ${outdir}/${sample}_recal.bam --genotyping_mode DISCOVERY -stand_emit_conf 10 -stand_call_conf 30 -o ${outdir}/${sample}.vcf -L 17:7552323-7616951
 
 # Annotate VCF (variants) file
-$java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sample}.vcf > ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF
+$java -jar $snpEFF hg19 ${outdir}/${sample}.vcf > ${outdir}/${sample}.tmp.vcf 
+$java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf ${outdir}/${sample}.tmp.vcf  > ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF
 $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.tmp.COSMIC.coding.noncoding.snpEFF
 $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample}.tmp.COSMIC.coding.snpEFF > ${outdir}/${sample}.COSMIC.coding.noncoding.dbsnp.snpEFF
 # Download your bam and bai files and visualize with IGV tool
@@ -147,7 +146,11 @@ $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf ${outdir}/${sample
 # http://dkoboldt.github.io/varscan/  #
 #######################################
 
-############################################################################
+##########################################
+#         VarScan Normal Variant Call    #
+# http://dkoboldt.github.io/varscan/     #
+##########################################
+
 varscan=/home/thwang/software/VarScan.v2.3.9.jar
 samtools=/home/thwang/software/samtools-1.2/bin/samtools
 reference=/home/thwang/reference/hg19.fa
@@ -155,8 +158,27 @@ picard=/home/thwang/software/picard.jar
 snpEFF=/home/thwang/software/snpEff/snpEff.jar
 outdir="$PWD"
 
-Nbam=normal_TP53_recal.bam
-Tbam=tumor_TP53_recal.bam
+Nbam=normal_TP53_dedup_reads.bam
+$samtools mpileup -f $reference $Nbam > normal.mpileup
+$java -jar $varscan mpileup2snp normal.mpileup > normal.varscan.germline.snp.vcf --output-vcf
+$java -jar $varscan mpileup2indel normal.mpileup > normal.varscan.germline.indel.vcf --output-vcf
+
+$java -jar $snpEFF hg19 normal.varscan.germline.snp.vcf > normal.varscan.germline.snp.ann.vcf
+$java -jar $snpEFF hg19 normal.varscan.germline.indel.vcf > normal.varscan.germline.indel.ann.vcf
+
+#If you want to annotate with COSMIC and dbSNP, please follow steps we desribed the above
+# $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicCodingMuts.vcf your_vcf_file.vcf > tmp.COSMIC.coding.snpEFF
+# $java -jar ${SnpSift} annotate ${snpEFFanno}/CosmicNonCodingVariants.vcf tmp.COSMIC.coding.snpEFF > tmp.COSMIC.coding.noncoding.snpEFF
+# $java -jar ${SnpSift} annotate ${snpEFFanno}/All_20160408.vcf tmp.COSMIC.coding.noncoding.snpEFF > your_vcf_file.COSMIC.coding.noncoding.dbsnp.snpEFF
+
+
+#################################################################
+#         VarScan Tumor Variant Call without matching normal    #
+# http://dkoboldt.github.io/varscan/                            #
+#################################################################
+
+
+Tbam=tumor_TP53_dedup_reads.bam
 
 $samtools mpileup -f $reference $Nbam > normal.mpileup
 $samtools mpileup -f $reference $Tbam > tumor.mpileup
