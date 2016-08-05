@@ -21,10 +21,10 @@ cd day5
 cp -R /data/bootcamp/day5/* .
 
 # Environmental variables
-echo 'export PATH=/data/bootcamp/tools/delly-0.7.3/src:/data/bootcamp/tools/delly-0.7.3/src/bcftools:/data/bootcamp/tools/samtools-1.2/bin:/data/bootcamp/tools/jdk1.8.0_101/bin:$PATH' >> $HOME/.bash_profile
+export PATH=/data/bootcamp/tools/bwa-0.7.12:/data/bootcamp/tools/delly-0.7.3/src:/data/bootcamp/tools/delly-0.7.3/src/bcftools:/data/bootcamp/tools/samtools-1.2/bin:/data/bootcamp/tools/jdk1.8.0_101/bin:$PATH
 
 # Picard
-echo 'export PICARD_DIRECTORY=/data/bootcamp/tools/picard-tools-1.96' >> $HOME/.bash_profile
+export PICARD_DIRECTORY=/data/bootcamp/tools/picard-tools-1.96
 
 #SHEAR: Structural Variation call algorithm (http://vk.cs.umn.edu/SHEAR/)
 (http://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-15-84)
