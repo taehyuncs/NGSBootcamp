@@ -1,1 +1,16 @@
-test
+# Structural Variation (SV) analysis
+
+# Very general workflow for variant analysis
+# 1. fastq files from your sample
+# 2. Run FastQC for quality control
+#  2a) if qualtify of bases (in particular at the end of reads) are bad, perform trimming.
+#  2b) if there are adapter sequences present in your fastq files, remove adapter sequence.
+# => OK. fastq quality is good. Lets go to step 3
+# 3. Perform Alignemnt using your favorite aligner (e.g., BWA, etc.) and generate SAM or BAM files.
+# 4. Sort bam file and generate an index file for your bam file.
+# 5. Variant calling using your favorite SV detection tool
+# 6. Now we have variant calls (e.g., a list of SVs). We want to annotate them to see whether those variants are reported by someone eles or associated with known disease phenotype and/or see what would be functional impact.
+#  6a) We will use snpEff tool (http://snpeff.sourceforge.net) and please read snpEff readme file (http://snpeff.sourceforge.net/SnpEff.html)
+# 7. Interpretation. Now we have annotated variant calls and need to make sense out of it.
+# 8. It is important to visualize your bam file to double check whether variants called by computational algorithms are real(?).
+# Utilmately, you want to validate your variants using Sanger or etc.
