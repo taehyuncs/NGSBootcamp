@@ -28,6 +28,7 @@ echo 'export PICARD_DIRECTORY=/data/bootcamp/tools/picard-tools-1.96' >> $HOME/.
 
 #SHEAR: Structural Variation call algorithm (http://vk.cs.umn.edu/SHEAR/)
 (http://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-15-84)
+export PATH=/data/bootcamp/seqprg/jre1.8.0_101/bin:$PATH
 java -jar /data/bootcamp/tools/shear-v1.1.2.1/SHEAR.jar sv -p output_sample_2126 -f reference/chr19.fa -b sample_2126_T1.bam --bam-normal sample_2126_N1.bam
 
 #You should be able to see the following results
